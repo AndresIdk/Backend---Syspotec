@@ -1,7 +1,4 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Syspotec.Core.DTOs;
 using Syspotec.Core.entities;
 using Syspotec.Core.Interfaces;
@@ -12,8 +9,8 @@ namespace Syspotec.Api.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserRepository user;
-        public UserController(IUserRepository _user) 
+        private readonly IUserService user;
+        public UserController(IUserService _user) 
         {
             user = _user;
         }
@@ -35,10 +32,7 @@ namespace Syspotec.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] User data)
         {
-            var hashAlgorithm = SHA256.Create();
-            var hash = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(data.Password));
-            var pwd_hash = Convert.ToBase64String(hash);
-            var response = await user.Post(data, pwd_hash);
+            var response = await user.Post(data);
             if (response) { return Ok("Registro cargado exitosamente"); } else { return BadRequest("No se pudo crear el registro exitosamente"); }
         }
 
@@ -60,6 +54,13 @@ namespace Syspotec.Api.Controllers
 
             var response = await user.Update(id, data);
             if (response) { return Ok("Registro actualizado exitosamente"); } else { return BadRequest("No se pudo actualizar el registro exitosamente"); }
+        }
+
+        [HttpGet("auth/")]
+        public async Task<ActionResult> Login([FromBody] LoginUserDTO userData)
+        {
+            var response = await user.GetPWD(userData);
+            if (response) { return Ok("Credenciales correctas"); } else { return BadRequest("Credenciales incorrectas"); }
         }
 
     }

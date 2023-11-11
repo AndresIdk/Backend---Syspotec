@@ -29,7 +29,7 @@ namespace Syspotec.Infrastructure.Repositories
                             {
                                 var state = new State();
                                 state.Id = (int)reader["id"];
-                                state.Name = (string)reader["name"];
+                                state.Name = ((string)reader["name"]).Trim();
                                 states.Add(state);
                             }
                         }
@@ -61,7 +61,7 @@ namespace Syspotec.Infrastructure.Repositories
                             while (await reader.ReadAsync())
                             {
                                 state.Id = (int)reader["id"];
-                                state.Name = (string)reader["name"];
+                                state.Name = ((string)reader["name"]).Trim();
                             }
                         }
                     }

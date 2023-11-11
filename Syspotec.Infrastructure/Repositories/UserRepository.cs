@@ -1,10 +1,11 @@
-﻿using System.Data.SqlClient;
-using System.Data;
+﻿using System.Data;
+using System.Data.SqlClient;
+using System.Security.Cryptography;
+using System.Text;
+using Syspotec.Core.DTOs;
 using Syspotec.Core.entities;
 using Syspotec.Core.Interfaces;
 using Syspotec.Infrastructure.Data;
-using Syspotec.Core.DTOs;
-using System.Net.Sockets;
 
 namespace Syspotec.Infrastructure.Repositories
 {
@@ -30,8 +31,8 @@ namespace Syspotec.Infrastructure.Repositories
                             {
                                 var user = new UserDTO();
                                 user.NIT = (int) reader["nit"];
-                                user.First_name = (string)reader["first_name"];
-                                user.Last_name = (string)reader["last_name"];
+                                user.First_name = ((string)reader["first_name"]).Trim();
+                                user.Last_name = ((string)reader["last_name"]).Trim();
                                 users.Add(user);
                             }
                         }
@@ -46,7 +47,7 @@ namespace Syspotec.Infrastructure.Repositories
             }
         }
 
-        public async Task<User> GetByID(int user_id)
+        public async Task<User> GetByID(int nit)
         {
             var user = new User();
             try
@@ -57,16 +58,16 @@ namespace Syspotec.Infrastructure.Repositories
                     {
                         await sql.OpenAsync();
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("id", user_id);
+                        cmd.Parameters.AddWithValue("id", nit);
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
                             while (await reader.ReadAsync())
                             {
                                 user.NIT = (int)reader["nit"];
-                                user.First_name = (string)reader["first_name"];
-                                user.Last_name = (string)reader["last_name"];
-                                user.Email = (string)reader["email"];
-                                user.Password = (string)reader["password"];
+                                user.First_name = ((string)reader["first_name"]).Trim();
+                                user.Last_name = ((string)reader["last_name"]).Trim();
+                                user.Email = ((string)reader["email"]).Trim();
+                                user.Password = ((string)reader["password"]).Trim();
                             }
                         }
                     }
@@ -80,8 +81,12 @@ namespace Syspotec.Infrastructure.Repositories
             }
         }
 
-        public async Task<bool> Post(User user, string pwd_hash)
+        public async Task<bool> Post(User user)
         {
+            var hashAlgorithm = SHA256.Create();
+            var hash = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(user.Password));
+            var pwd_hash = Convert.ToBase64String(hash);
+
             try
             {
                 using (var sql = new SqlConnection(db.DBConnection()))
@@ -106,7 +111,7 @@ namespace Syspotec.Infrastructure.Repositories
                 return false;
             }
         }
-        public async Task<bool> Delete(int user_id)
+        public async Task<bool> Delete(int nit)
         {
             try
             {
@@ -115,7 +120,7 @@ namespace Syspotec.Infrastructure.Repositories
                     using (var cmd = new SqlCommand("deleteUser", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("id", user_id);
+                        cmd.Parameters.AddWithValue("id", nit);
                         await sql.OpenAsync();
                         await cmd.ExecuteNonQueryAsync();
                     }
@@ -129,7 +134,7 @@ namespace Syspotec.Infrastructure.Repositories
             }
         }
 
-        public async Task<bool> Update(int user_id, User user)
+        public async Task<bool> Update(int nit, User user)
         {
             try
             {
@@ -138,7 +143,7 @@ namespace Syspotec.Infrastructure.Repositories
                     using (var cmd = new SqlCommand("updateTicket", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("id", user_id);
+                        cmd.Parameters.AddWithValue("id", nit);
                         cmd.Parameters.AddWithValue("Fname", user.First_name);
                         cmd.Parameters.AddWithValue("Lname", user.Last_name);
                         cmd.Parameters.AddWithValue("email", user.Email);
@@ -155,6 +160,37 @@ namespace Syspotec.Infrastructure.Repositories
 
                 Console.WriteLine(ex.ToString());
                 return false;
+            }
+        }
+
+        public async Task<string> GetPWD(int nit)
+        {
+            string pwd = null;
+            try
+            {
+
+                using (var sql = new SqlConnection(db.DBConnection()))
+                {
+                    using (var cmd = new SqlCommand("getPWD", sql))
+                    {
+                        await sql.OpenAsync();
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("nit", nit);
+                        using (var reader = await cmd.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                pwd = ((string)reader["password"]).Trim();
+                            }
+                        }
+                    }
+                }
+                return pwd;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return pwd;
             }
         }
     }

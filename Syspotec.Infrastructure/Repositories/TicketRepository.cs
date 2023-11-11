@@ -28,8 +28,8 @@ namespace Syspotec.Infrastructure.Repositories
                             {
                                 var ticket = new Ticket();
                                 ticket.Id = (int)reader["id_ticket"];
-                                ticket.Description = (string)reader["description"];
-                                ticket.Priority = (string)reader["priority"];
+                                ticket.Description = ((string)reader["description"]).Trim();
+                                ticket.Priority = ((string)reader["priority"]).Trim();
                                 tickets.Add(ticket);
                             }
                         }
@@ -61,8 +61,8 @@ namespace Syspotec.Infrastructure.Repositories
                             while (await reader.ReadAsync())
                             {
                                 ticket.Id = (int)reader["id_ticket"];
-                                ticket.Description = (string)reader["description"];
-                                ticket.Priority = (string)reader["priority"];
+                                ticket.Description = ((string)reader["description"]).Trim();
+                                ticket.Priority = ((string)reader["priority"]).Trim();
                             }
                         }
                     }
