@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Syspotec.Api.Responses;
 using Syspotec.Core.DTOs;
 using Syspotec.Core.entities;
 using Syspotec.Core.Interfaces;
@@ -34,15 +35,18 @@ namespace Syspotec.Api.Controllers
         {
             var nowLocal = DateTime.Now.ToLocalTime();
             var response = await assigned.Post(data, nowLocal);
-            if (response) { return Ok("Registro cargado exitosamente"); } else { return BadRequest("No se pudo crear el registro exitosamente"); }
-            
+            string[] opc = { "Registro cargado exitosamente", "No se pudo crear el registro exitosamente" };
+            var objResponse = new ApiResponse(opc, response).getResponse();
+            if (response) { return Ok(objResponse); } else { return BadRequest(objResponse); }
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
             var response = await assigned.Delete(id);
-            if (response) { return Ok("Registro eliminado exitosamente"); } else { return BadRequest("No se pudo eliminar el registro exitosamente"); }
+            string[] opc = { "Registro eliminado exitosamente", "No se pudo eliminar el registro exitosamente" };
+            var objResponse = new ApiResponse(opc, response).getResponse();
+            if (response) { return Ok(objResponse); } else { return BadRequest(objResponse); }
         }
 
         [HttpPut("{id}")]
@@ -56,7 +60,10 @@ namespace Syspotec.Api.Controllers
             if (data.ID_status == 0){ data.ID_status = old_data.ID_status; }
             
             var response = await assigned.Update(id, data, nowLocal);
-            if (response) { return Ok("Registro actualizado exitosamente"); } else { return BadRequest("No se pudo actualizar el registro exitosamente"); }
+            string[] opc = { "Registro actualizado exitosamente", "No se pudo actualizar el registro exitosamente" };
+            var objResponse = new ApiResponse(opc, response).getResponse();
+            if (response) { return Ok(objResponse); } else { return BadRequest(objResponse); }
+            
         }
     }
 }

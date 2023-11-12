@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Syspotec.Api.Responses;
 using Syspotec.Core.entities;
 using Syspotec.Core.Interfaces;
 
@@ -32,21 +33,27 @@ namespace Syspotec.Api.Controllers
         public async Task<ActionResult> Post([FromBody] State data)
         {
             var response = await state.Post(data);
-            if (response) { return Ok("Registro cargado exitosamente"); } else { return BadRequest("No se pudo crear el registro exitosamente"); }
+            string[] opc = { "Registro cargado exitosamente", "No se pudo crear el registro exitosamente" };
+            var objResponse = new ApiResponse(opc, response).getResponse();
+            if (response) { return Ok(objResponse); } else { return BadRequest(objResponse); }
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
             var response = await state.Delete(id);
-            if (response) { return Ok("Registro eliminado exitosamente"); } else { return BadRequest("No se pudo eliminar el registro exitosamente"); }
+            string[] opc = { "Registro eliminado exitosamente", "No se pudo eliminar el registro exitosamente" };
+            var objResponse = new ApiResponse(opc, response).getResponse();
+            if (response) {  return Ok(objResponse); } else { return  BadRequest(objResponse); }
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] State data)
         {
             var response = await state.Update(id, data);
-            if (response) { return Ok("Registro actualizado exitosamente"); } else { return BadRequest("No se pudo actualizar el registro exitosamente"); }
+            string[] opc = { "Registro actualizado exitosamente", "No se pudo actualizar el registro exitosamente" };
+            var objResponse = new ApiResponse(opc, response).getResponse();
+            if (response) { return Ok(objResponse); } else { return BadRequest(objResponse); }
         }
     }
 }

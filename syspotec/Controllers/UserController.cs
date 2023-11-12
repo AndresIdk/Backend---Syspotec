@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
+using Syspotec.Api.Responses;
 using Syspotec.Core.DTOs;
 using Syspotec.Core.entities;
 using Syspotec.Core.Interfaces;
@@ -33,14 +35,18 @@ namespace Syspotec.Api.Controllers
         public async Task<ActionResult> Post([FromBody] User data)
         {
             var response = await user.Post(data);
-            if (response) { return Ok("Registro cargado exitosamente"); } else { return BadRequest("No se pudo crear el registro exitosamente"); }
+            string[] opc = { "Registro cargado exitosamente", "No se pudo crear el registro exitosamente" };
+            var objResponse = new ApiResponse(opc, response).getResponse();
+            if (response) { return Ok(objResponse); } else { return BadRequest(objResponse); }
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
             var response = await user.Delete(id);
-            if (response) { return Ok("Registro eliminado exitosamente"); } else { return BadRequest("No se pudo eliminar el registro exitosamente"); }
+            string[] opc = { "Registro eliminado exitosamente", "No se pudo eliminar el registro exitosamente" };
+            var objResponse = new ApiResponse(opc, response).getResponse();
+            if (response) { return Ok(objResponse); } else { return BadRequest(objResponse); }
         }
 
         [HttpPut("{id}")]
@@ -53,14 +59,18 @@ namespace Syspotec.Api.Controllers
             if (data.Password == null) { data.Password = old_data.Password; }
 
             var response = await user.Update(id, data);
-            if (response) { return Ok("Registro actualizado exitosamente"); } else { return BadRequest("No se pudo actualizar el registro exitosamente"); }
+            string[] opc = { "Registro actualizado exitosamente", "No se pudo actualizar el registro exitosamente" };
+            var objResponse = new ApiResponse(opc, response).getResponse();
+            if (response) { return Ok(objResponse); } else { return BadRequest(objResponse); }
         }
 
-        [HttpGet("auth/")]
+        [HttpPost("auth/")]
         public async Task<ActionResult> Login([FromBody] LoginUserDTO userData)
         {
             var response = await user.GetPWD(userData);
-            if (response) { return Ok("Credenciales correctas"); } else { return BadRequest("Credenciales incorrectas"); }
+            string[] opc = { "Credenciales correctas", "Credenciales incorrectas" };
+            var objResponse = new ApiResponse(opc, response).getResponse();
+            if (response) { return Ok(objResponse); } else { return Unauthorized(objResponse); }
         }
 
     }

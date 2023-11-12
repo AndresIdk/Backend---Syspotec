@@ -3,6 +3,18 @@ using Syspotec.Core.Services;
 using Syspotec.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configuracion CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("jaime", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -27,6 +39,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("jaime"); // Implementar CORS
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
