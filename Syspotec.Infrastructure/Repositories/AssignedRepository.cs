@@ -29,10 +29,47 @@ namespace Syspotec.Infrastructure.Repositories
                             while (await reader.ReadAsync())
                             {
                                 var assigned = new Assigned();
+                                assigned.Id = (int)reader["id"];
                                 assigned.NIT = (int) reader["nit"];
                                 assigned.Id_ticket = (int) reader["id_ticket"];
                                 assigned.ID_status = (int) reader["id_status"];
                                 assigned.Date = (DateTime) reader["date"];
+                                assigneds.Add(assigned);
+                            }
+                        }
+                    }
+                }
+                return assigneds;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return assigneds;
+            }
+        }
+
+        public async Task<List<Assigned>> GetByNIT(int assigned_nit)
+        {
+            var assigneds = new List<Assigned>();
+            try
+            {
+                using (var sql = new SqlConnection(db.DBConnection()))
+                {
+                    using (var cmd = new SqlCommand("showAssignedByNit", sql))
+                    {
+                        await sql.OpenAsync();
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("nit", assigned_nit);
+                        using (var reader = await cmd.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                var assigned = new Assigned();
+                                assigned.Id = (int)(reader["id"]);
+                                assigned.NIT = (int)reader["nit"];
+                                assigned.Id_ticket = (int)reader["id_ticket"];
+                                assigned.ID_status = (int)reader["id_status"];
+                                assigned.Date = (DateTime)reader["date"];
                                 assigneds.Add(assigned);
                             }
                         }

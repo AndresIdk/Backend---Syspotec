@@ -23,10 +23,10 @@ namespace Syspotec.Api.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Assigned>> GetById(int id)
+        [HttpGet("{nit}")]
+        public async Task<ActionResult<Assigned>> GetById(int nit)
         {
-            var response = await assigned.GetByID(id);
+            var response = await assigned.GetByNIT(nit);
             return Ok(response);
         }
 

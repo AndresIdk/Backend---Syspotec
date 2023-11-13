@@ -69,8 +69,27 @@ namespace Syspotec.Api.Controllers
         {
             var response = await user.GetPWD(userData);
             string[] opc = { "Credenciales correctas", "Credenciales incorrectas" };
-            var objResponse = new ApiResponse(opc, response).getResponse();
-            if (response) { return Ok(objResponse); } else { return Unauthorized(objResponse); }
+   
+            if (response) 
+            {
+                var body = await user.GetByID(userData.nit);
+                var User = new
+                {
+                    data = body,
+                    message = response ? opc[0] : opc[1],
+                    status = response
+                };
+                return Ok(User); 
+            }
+            else 
+            {
+                var User = new
+                {
+                    message = response ? opc[0] : opc[1],
+                    status = response
+                };
+                return Unauthorized(User);
+            }
         }
 
     }

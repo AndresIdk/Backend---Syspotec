@@ -34,8 +34,26 @@ namespace Syspotec.Api.Controllers
         {
             var response = await ticket.Post(data);
             string[] opc = { "Registro cargado exitosamente", "No se pudo crear el registro exitosamente" };
-            var objResponse = new ApiResponse(opc, response).getResponse();
-            if (response) { return Ok(objResponse); } else { return BadRequest(objResponse); }
+
+            if (response != 0)
+            {
+                var Ticket = new
+                {
+                    id = response,
+                    message = (response != 0) ? opc[0] : opc[1],
+                    status = (response != 0) ? true : false
+                };
+                return Ok(Ticket); 
+            } 
+            else 
+            {
+                var Ticket = new
+                {
+                    message = (response != 0) ? opc[0] : opc[1],
+                    status = (response != 0) ? true : false
+                };
+                return BadRequest(Ticket);
+            }
         }
 
         [HttpDelete("{id}")] 

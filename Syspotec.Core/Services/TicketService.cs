@@ -19,7 +19,7 @@ namespace Syspotec.Core.Services
         {
             return _ticketRepository.GetByID(ticket_id);
         }
-        public Task<bool> Post(Ticket ticket)
+        public Task<int> Post(Ticket ticket)
         {
             return _ticketRepository.Post(ticket);
         }

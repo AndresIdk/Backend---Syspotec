@@ -75,8 +75,9 @@ namespace Syspotec.Infrastructure.Repositories
                 return ticket;
             }
         }
-        public async Task<bool> Post(Ticket ticket)
+        public async Task<int> Post(Ticket ticket)
         {
+            int newTicketId = 0;
             try
             {
                 using (var sql = new SqlConnection(db.DBConnection()))
@@ -86,16 +87,21 @@ namespace Syspotec.Infrastructure.Repositories
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("Description", ticket.Description);
                         cmd.Parameters.AddWithValue("Priority", ticket.Priority);
+                        
+                        SqlParameter newTicketIdParam = new SqlParameter("@NewTicketID", SqlDbType.Int);
+                        newTicketIdParam.Direction = ParameterDirection.Output;
+                        cmd.Parameters.Add(newTicketIdParam);
                         await sql.OpenAsync();
                         await cmd.ExecuteNonQueryAsync();
+                        newTicketId = (int)newTicketIdParam.Value;
                     }
                 }
-                return true;
+                return newTicketId;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                return false;
+                return newTicketId;
             }
         }
         public async Task<bool> Delete(int ticket_id)

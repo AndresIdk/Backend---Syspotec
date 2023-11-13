@@ -17,6 +17,11 @@ namespace Syspotec.Core.Services
             return _assignedRepository.Get();
         }
 
+        public Task<List<Assigned>> GetByNIT(int assigned_nit)
+        {
+            return _assignedRepository.GetByNIT(assigned_nit);
+        }
+
         public Task<Assigned> GetByID(int assigned_id)
         {
             return _assignedRepository.GetByID(assigned_id);
@@ -36,5 +41,6 @@ namespace Syspotec.Core.Services
         {
             return _assignedRepository.Update(assigned_id, assigned, date);
         }
+
     }
 }
