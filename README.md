@@ -25,3 +25,5 @@ dotnet run
 ```
 
 En la ruta 'http://localhost:5132/swagger/index.html' se encuentra una descripcion de la navegacion de la API.
+
+**IMPORTANTE:** Base de datos SQL server corriendo en la nube (Google Cloud Platform)
