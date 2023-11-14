@@ -5,7 +5,7 @@ Backend en .NET CORE para prueba tecnica de la empresa Syspotec - Clean Architec
 
 **1. Clonar respositorio**
 ```
-git clone https://github.com/tu-usuario/tu-repositorio.git
+git clone https://github.com/AndresIdk/Backend---Syspotec.git
 cd tu-repositorio 
 ```
 
