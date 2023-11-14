@@ -1,4 +1,4 @@
-# Backend---Syspotec
+# Backend Syspotec
 Backend en .NET CORE para prueba tecnica de la empresa Syspotec - Clean Architecture
 
 **Pasos para ejecutar proyecto en local.**
